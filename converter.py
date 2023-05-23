@@ -1,5 +1,6 @@
 import os
 import json
+import base64
 
 def vsixToText(parentDirectory):
     json = dict()
@@ -16,7 +17,8 @@ def vsixToText(parentDirectory):
                 with open(nowDirectory, 'rb') as f:
                     print(nowDirectory, "is opened as binary")
                     try :
-                        json[dir] = b''.join(f.readlines())
+                        binaryData = b''.join(f.readlines())
+                        json[dir] = str(base64.b64encode(binaryData), encoding='UTF-8')
                     except Exception as e:
                         json[dir] = ''
                         print("Error", dir, ":", e)
@@ -35,8 +37,10 @@ def converter():
     result = dict()
     for dir in os.listdir(VSIXDIR):
         if not os.path.isfile(dir) :
+            print("convert vsix to json :", dir)
             result[dir] =  vsixToText(VSIXDIR + "/" + dir)
-
+        with open('./text/' + dir +'.json', 'w') as fp:
+            json.dump(result, fp)
 
 if __name__ == '__main__':
     converter()
