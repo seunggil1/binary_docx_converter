@@ -1,8 +1,8 @@
 import os
-import json
 import base64
 from docx import Document
-# import pdftotext
+
+# pip install python-docx
 
 VSIXDIR = "./vsix"
 TEXTDIR = "./text"
@@ -27,6 +27,7 @@ def textToVsix(fileLocation, fileName):
     global VSIXDIR
     global TEXTDIR
 
+    # binary to word
     doc = Document(fileLocation)
     data = doc.paragraphs[0].text
     data = data.encode(encoding='utf-8')
@@ -34,6 +35,7 @@ def textToVsix(fileLocation, fileName):
     with open(VSIXDIR + "/" + fileName + '.vsix', 'wb') as g:
             g.write(res)
 
+    # word to binary
     # with open(fileLocation, 'r', encoding='utf-8') as f:
     #     data = ''.join(f.readlines())
     #     res = bytes(data, encoding='utf-8')
@@ -49,10 +51,10 @@ def converter():
             print("convert vsix to text :", dir)
             vsixToText(VSIXDIR + "/" + dir, dir)
     
-    for dir in os.listdir(TEXTDIR):
-        # if os.path.isfile(dir) :
-            print("convert text to visx :", dir)
-            textToVsix(TEXTDIR + "/" + dir, dir)
+    # for dir in os.listdir(TEXTDIR):
+    #     # if os.path.isfile(dir) :
+    #         print("convert text to visx :", dir)
+    #         textToVsix(TEXTDIR + "/" + dir, dir)
 
 if __name__ == '__main__':
     converter()
