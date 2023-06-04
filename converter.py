@@ -2,13 +2,16 @@ import os
 import base64
 from docx import Document
 
+# 바이너리 파일 <> 워드 파일간 변환 프로그램
+
+# 라이브러리 설치 필요
 # pip install python-docx
 
-VSIXDIR = "./vsix"
-TEXTDIR = "./text"
-def vsixToText(fileLocation, fileName):
-    global VSIXDIR
-    global TEXTDIR
+BINARYDIR = "./binary"
+WORDDIR = "./docx"
+def binaryToWord(fileLocation : str, fileName : str):
+    global BINARYDIR
+    global WORDDIR
 
     with open(fileLocation, 'rb') as f:
         binaryData = b''.join(f.readlines())
@@ -16,45 +19,36 @@ def vsixToText(fileLocation, fileName):
         res = res.decode('utf-8')
         doc = Document()
         doc.add_paragraph(res)
-        doc.save(TEXTDIR + "/" + fileName + '.docx')
-    # with open(fileLocation, 'rb') as f:
-    #     binaryData = b''.join(f.readlines())
-    #     res = base64.b64encode(binaryData)
-    #     res = res.decode('utf-8')
-    #     with open(TEXTDIR + "/" + fileName + '.txt', 'w', encoding='utf-8') as g:
-    #         g.write(res)
-def textToVsix(fileLocation, fileName):
-    global VSIXDIR
-    global TEXTDIR
+        doc.save(WORDDIR + "/" + fileName + '.docx')
+
+def wordToBinary(fileLocation : str, fileName : str):
+    global BINARYDIR
+    global WORDDIR
 
     # binary to word
     doc = Document(fileLocation)
     data = doc.paragraphs[0].text
     data = data.encode(encoding='utf-8')
     res = base64.b64decode(data)
-    with open(VSIXDIR + "/" + fileName + '.vsix', 'wb') as g:
+    with open(BINARYDIR + "/" + fileName[:fileName.rfind('.docx')], 'wb') as g:
             g.write(res)
 
-    # word to binary
-    # with open(fileLocation, 'r', encoding='utf-8') as f:
-    #     data = ''.join(f.readlines())
-    #     res = bytes(data, encoding='utf-8')
-    #     res = base64.b64decode(res)
-    #     with open(VSIXDIR + "/" + fileName + '.vsix', 'wb') as g:
-    #         g.write(res)
-
 def converter():
-    r = os.listdir(VSIXDIR)
-    r.reverse()
-    for dir in r:
-        # if os.path.isfile(dir) :
-            print("convert vsix to text :", dir)
-            vsixToText(VSIXDIR + "/" + dir, dir)
+    bdir = os.listdir(BINARYDIR)
+    wdir = os.listdir(WORDDIR)
+
+    for fileName in bdir:
+        if fileName == ".DS_store" : # mac에서 사용하는 메타파일 제외
+            continue
+        # if os.path.isfile(dir) : -> mac에서 안먹혀서 일단 제외
+        print("convert binaryFile to wordFile :", fileName)
+        binaryToWord(BINARYDIR + "/" + fileName, fileName)
     
-    # for dir in os.listdir(TEXTDIR):
-    #     # if os.path.isfile(dir) :
-    #         print("convert text to visx :", dir)
-    #         textToVsix(TEXTDIR + "/" + dir, dir)
+    for fileName in wdir:
+        if fileName == ".DS_store" :
+            continue
+        print("convert text to visx :", fileName)
+        wordToBinary(WORDDIR + "/" + fileName, fileName)
 
 if __name__ == '__main__':
     converter()
