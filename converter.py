@@ -38,14 +38,14 @@ def converter():
     wdir = os.listdir(WORDDIR)
 
     for fileName in bdir:
-        if fileName == ".DS_store" : # mac에서 사용하는 메타파일 제외
+        if fileName == ".DS_Store" : # mac에서 사용하는 메타파일 제외
             continue
         # if os.path.isfile(dir) : -> mac에서 안먹혀서 일단 제외
         print("convert binaryFile to wordFile :", fileName)
         binaryToWord(BINARYDIR + "/" + fileName, fileName)
     
     for fileName in wdir:
-        if fileName == ".DS_store" :
+        if fileName == ".DS_Store" :
             continue
         print("convert text to visx :", fileName)
         wordToBinary(WORDDIR + "/" + fileName, fileName)
